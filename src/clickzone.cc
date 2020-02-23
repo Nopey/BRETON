@@ -44,14 +44,14 @@ void clickzone_move(int x, int y){
 
             // squared dot product just to weight it more..
             // playtesting the feel of this on PS2 will be important.
-            double score = dotproduct*dotproduct/cm/clickzones[idx].scale;
+            double score = dotproduct*dotproduct/cm*clickzones[idx].scale;
             if (score>best_score) {
                 best_score = score;
                 best_idx = idx;
             }
         }
         if (best_idx!=-1) {
-            // printf("Moved to %d with score of %.10lf\n", best_idx, best_score);
+            printf("Moved to %d with score of %.10lf\n", best_idx, best_score);
             move_cooldown=15;
             selected_zone = best_idx;
         }

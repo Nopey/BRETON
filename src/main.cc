@@ -24,6 +24,8 @@ SDL_Surface *load_image( char const *const filename ) {
 // Background
 static SDL_Surface *image = NULL;
 
+SDL_Surface *screen = NULL;
+
 int main(int argc, char **argv) {
     
     if (SDL_Init( SDL_INIT_EVERYTHING ) == -1) {
