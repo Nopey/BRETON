@@ -1,6 +1,7 @@
 # This is a screen file
 # filled with "Click Zones", "decals", and a background image.
 # Bunch of Zones
+
 # X   Y   Scale
 z 100 100 100
 z 200 100 100
@@ -17,4 +18,12 @@ z 392 444 100
 z 257 31  100
 z 498 297 100
 z 150 169 100
-z 472 427 100
+#? sideDoorOpen
+#+z 472 427 100 attempt_bottleflip.txt waterbootle.png
+
+# X  Y    File
+#? sideDoorOpen
+#+d 100 100 waterbottle.png
+#? sideDoorOpen
+#-d 100 100 waterbottle.png
+
