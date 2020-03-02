@@ -2,6 +2,11 @@
 #include "main.h"
 #include <stdio.h>
 
+char *trim(char *stmt){
+    while (*stmt==' ' || *stmt=='\t') stmt++;
+    return stmt;
+}
+
 bool execScreen(char const *const filename){
     clickzones.clear();
     FILE* file = fopen(filename, "r");
@@ -13,8 +18,7 @@ bool execScreen(char const *const filename){
 
     while (fgets(line, sizeof(line), file)) {
         // Cut whitespace
-        char *stmt = line;
-        while (*stmt==' ' || *stmt=='\t') stmt++;
+        char *stmt = trim(line);
 
         // If there is a comment, cut it off
         {
@@ -25,7 +29,7 @@ bool execScreen(char const *const filename){
 
         if (*stmt=='+' || *stmt=='-'){
             if (*stmt=='+' ^ flag) continue;
-            lse stmt++;
+            else stmt = trim(stmt+1);
         }
 
         switch(*stmt){
@@ -37,6 +41,9 @@ bool execScreen(char const *const filename){
                 clickzones.push_back(Clickzone{x, y, scale});
                 break;
             }
+            case 'B': case 'b': // Set background
+                setBackground(trim(stmt+1));
+                break;
             case '?': // Check for flag
                 flag = true; //TODO: FLAGS
                 break;
@@ -57,6 +64,9 @@ bool execScreen(char const *const filename){
 
 void saveScript(){
     //TODO: Write to a file, write to the PS2 Memory card.
-    printf("Background: %s\n", getBackground());
-    //TODO: Save clickzones     
+    printf(
+        "# BRETON SAVE\n\n# Background\nB %s\n\n",
+        getBackground()
+    );
+    //TODO: Save clickzones
 }
