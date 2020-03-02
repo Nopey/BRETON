@@ -7,7 +7,7 @@ char *trim(char *stmt){
     return stmt;
 }
 
-bool execScreen(char const *const filename){
+bool execScript(char const *const filename){
     clickzones.clear();
     FILE* file = fopen(filename, "r");
     if (!file) return false;
@@ -23,12 +23,12 @@ bool execScreen(char const *const filename){
         // If there is a comment, cut it off
         {
             char *comment = stmt;
-            while(*comment && *comment!='#' && (*comment!='/' || *(comment+1)!='/')) comment++;
+            while(*comment && *comment!='#' && *comment!='\n' && (*comment!='/' || *(comment+1)!='/')) comment++;
             *comment = '\0';
         }
 
         if (*stmt=='+' || *stmt=='-'){
-            if (*stmt=='+' ^ flag) continue;
+            if ((*stmt=='+') ^ flag) continue;
             else stmt = trim(stmt+1);
         }
 

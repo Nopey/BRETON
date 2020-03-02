@@ -2,7 +2,7 @@
 #include "main.h"
 #include <math.h>
 
-static std::vector<Clickzone> clickzones;
+std::vector<Clickzone> clickzones;
 static int selected_zone = -1;
 static int move_cooldown = 0;
 
@@ -35,12 +35,12 @@ void clickzone_move(int x, int y){
         for (int idx = 0; idx<(int)clickzones.size(); idx++) {
             if (idx==selected_zone) continue;
 
-            // cx is the vector from us towards the 
+            // cx is the vector from us towards the zone
             int cx = clickzones[idx].x-rx;
             int cy = clickzones[idx].y-ry;
             double cm = sqrt(cx*cx+cy*cy);
-            
-            // Normalized 
+
+            // Normalized
             double scx = double(cx)/cm;
             double scy = double(cy)/cm;
 
@@ -65,7 +65,6 @@ void clickzone_move(int x, int y){
     }
 }
 void clickzone_draw(){
-    if (selected_zone<0) return;
     //TODO: Once decals are a thing, this square rendering will be unnecessary.
     for (int idx = 0; idx<(int)clickzones.size(); idx++) {
         int rx = clickzones[idx].x, ry = clickzones[idx].y;
@@ -80,6 +79,7 @@ void clickzone_draw(){
                 ((uint32_t *) screen->pixels)[y*screen->w+x] = 0xFF00AA00;
         }
     }
+    if(selected_zone==-1) return;
     {
         int rx = clickzones[selected_zone].x, ry = clickzones[selected_zone].y;
         int const SIZE = 5;

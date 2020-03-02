@@ -3,6 +3,7 @@
 #include <iostream>
 // Woo, I love C strings!
 #include <string.h>
+#include <assert.h>
 
 #include "script.h"
 #include "clickzone.h"
@@ -27,7 +28,7 @@ SDL_Surface *screen = NULL;
 
 void setBackground(char const * path){
     size_t len = strlen(path);
-    background_path = realloc(background_path, len);
+    background_path = (char *) realloc(background_path, len);
     strcpy(background_path, path);
     assert(background_image = load_image(background_path));
 }
@@ -87,7 +88,7 @@ int main(int argc, char **argv) {
 
     saveScript();
 
-    SDL_FreeSurface(image);
+    if (background_image) SDL_FreeSurface(background_image);
     SDL_Quit();
     
     return EXIT_SUCCESS;

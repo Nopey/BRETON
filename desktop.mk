@@ -8,7 +8,7 @@ LDFLAGS = -g -lSDL -lSDL_image
 SHORTNAME=breton
 SRCDIR=src
 OBJDIR=obj
-SOURCE_NAMES=main.cc load_screen.cc clickzone.cc
+SOURCE_NAMES=main.cc script.cc clickzone.cc
 OBJECTS=$(SOURCE_NAMES:%.cc=$(OBJDIR)/%.o)
 # SOURCES=$(SOURCE_NAMES:%=$(SRCDIR)/%)
 
