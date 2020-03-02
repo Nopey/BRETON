@@ -2,8 +2,8 @@
 #include "main.h"
 #include <math.h>
 
-std::vector<Clickzone> clickzones;
-int selected_zone = 0;
+static std::vector<Clickzone> clickzones;
+static int selected_zone = -1;
 static int move_cooldown = 0;
 
 void clickzone_update(){
@@ -12,7 +12,14 @@ void clickzone_update(){
 
 void clickzone_move(int x, int y){
     // the "real" position, where our focus is now.
-    int rx = clickzones[selected_zone].x, ry = clickzones[selected_zone].y;
+    int rx, ry;
+    if(selected_zone>0){
+        rx = clickzones[selected_zone].x;
+        ry = clickzones[selected_zone].y;
+    }else{
+        rx = SCREEN_WIDTH/2;
+        ry = SCREEN_HEIGHT/2;
+    }
 
     // Velocity
     int magnitude_sqr = x*x+y*y;
@@ -58,6 +65,7 @@ void clickzone_move(int x, int y){
     }
 }
 void clickzone_draw(){
+    if (selected_zone<0) return;
     //TODO: Once decals are a thing, this square rendering will be unnecessary.
     for (int idx = 0; idx<(int)clickzones.size(); idx++) {
         int rx = clickzones[idx].x, ry = clickzones[idx].y;

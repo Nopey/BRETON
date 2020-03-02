@@ -1,11 +1,15 @@
 #include "clickzone.h"
+#include "main.h"
 #include <stdio.h>
 
-bool loadScreen(char const *const filename){
+bool execScreen(char const *const filename){
     clickzones.clear();
     FILE* file = fopen(filename, "r");
     if (!file) return false;
     char line[256];
+
+    // used + and -, set by ? and !
+    bool flag = false;
 
     while (fgets(line, sizeof(line), file)) {
         // Cut whitespace
@@ -19,6 +23,11 @@ bool loadScreen(char const *const filename){
             *comment = '\0';
         }
 
+        if (*stmt=='+' || *stmt=='-'){
+            if (*stmt=='+' ^ flag) continue;
+            lse stmt++;
+        }
+
         switch(*stmt){
             case 'Z': case 'z': { // Zone
                 int x, y;
@@ -28,6 +37,12 @@ bool loadScreen(char const *const filename){
                 clickzones.push_back(Clickzone{x, y, scale});
                 break;
             }
+            case '?': // Check for flag
+                flag = true; //TODO: FLAGS
+                break;
+            case '!': // Not
+                flag = !flag;
+                break;
             case '\0': // empty lines
                 break;
             default:
@@ -38,4 +53,10 @@ bool loadScreen(char const *const filename){
 
     fclose(file);
     return true;
+}
+
+void saveScript(){
+    //TODO: Write to a file, write to the PS2 Memory card.
+    printf("Background: %s\n", getBackground());
+    //TODO: Save clickzones     
 }

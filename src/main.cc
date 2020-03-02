@@ -1,16 +1,14 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <iostream>
-#include "load_screen.h"
+// Woo, I love C strings!
+#include <string.h>
+
+#include "script.h"
 #include "clickzone.h"
 #include "main.h"
 
-// Screen attributes
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-const int SCREEN_BPP = 32;
-
-SDL_Surface *load_image( char const *const filename ) {
+SDL_Surface *load_image( char const * filename ) {
     SDL_Surface* raw, *optimized = NULL;
 
     if ((raw = IMG_Load(filename))) {
@@ -22,9 +20,21 @@ SDL_Surface *load_image( char const *const filename ) {
 }
 
 // Background
-static SDL_Surface *image = NULL;
+static char *background_path = NULL;
+static SDL_Surface *background_image = NULL;
 
 SDL_Surface *screen = NULL;
+
+void setBackground(char const * path){
+    size_t len = strlen(path);
+    background_path = realloc(background_path, len);
+    strcpy(background_path, path);
+    assert(background_image = load_image(background_path));
+}
+
+char const *getBackground(){
+    return background_path;
+}
 
 int main(int argc, char **argv) {
     
@@ -36,14 +46,9 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    SDL_WM_SetCaption( "BRETON", NULL );
+    SDL_WM_SetCaption("BRETON", NULL);
 
-    if (!(image = load_image( "Kitchen_N.png" ))) {
-        SDL_Quit();
-        return EXIT_FAILURE;
-    }
-
-    loadScreen("Kitchen_N.txt");
+    execScript("Kitchen_N.txt");
 
     SDL_Rect offset;
     offset.x = 0;
@@ -70,17 +75,19 @@ int main(int argc, char **argv) {
         clickzone_update();
 
         // Draw background
-        SDL_BlitSurface( image, NULL, screen, &offset );
+        if (background_image) SDL_BlitSurface(background_image, NULL, screen, &offset);
 
         clickzone_draw();
 
-        if (SDL_Flip( screen ) == -1) {
+        if (SDL_Flip(screen) == -1) {
             break;
         }
         SDL_Delay(16);
     }
 
-    SDL_FreeSurface( image );
+    saveScript();
+
+    SDL_FreeSurface(image);
     SDL_Quit();
     
     return EXIT_SUCCESS;
