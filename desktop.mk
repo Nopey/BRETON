@@ -3,12 +3,12 @@
 # Magnus Larsen
 # Feb 2020
 CXXFLAGS = -g -Wall
-LDFLAGS = -g -lSDL -lSDL_image
+LDFLAGS = -g -lSDL -lSDL_image -lSDL_ttf
 
 SHORTNAME=breton
 SRCDIR=src
 OBJDIR=obj
-SOURCE_NAMES=main.cc script.cc clickzone.cc
+SOURCE_NAMES=main.cc script.cc clickzone.cc decal.cc textbox.cc
 OBJECTS=$(SOURCE_NAMES:%.cc=$(OBJDIR)/%.o)
 # SOURCES=$(SOURCE_NAMES:%=$(SRCDIR)/%)
 

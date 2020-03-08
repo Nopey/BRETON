@@ -1,5 +1,7 @@
 #include "clickzone.h"
+#include "decal.h"
 #include "main.h"
+#include "textbox.h"
 #include <stdio.h>
 
 char *trim(char *stmt){
@@ -8,7 +10,6 @@ char *trim(char *stmt){
 }
 
 bool execScript(char const *const filename){
-    clickzones.clear();
     FILE* file = fopen(filename, "r");
     if (!file) return false;
     char line[256];
@@ -32,23 +33,55 @@ bool execScript(char const *const filename){
             else stmt = trim(stmt+1);
         }
 
+        //TODO: Scatter the script loading elements to their files, like the saving?
         switch(*stmt){
-            case 'Z': case 'z': { // Zone
+            // Zone
+            case 'Z': case 'z': {
                 int x, y;
                 double scale;
-                if (sscanf(stmt, "z %d %d %lf", &x, &y, &scale)!=3) continue;
+                char action_filename[256];
+                action_filename[0] = '\0';
+                if (sscanf(stmt+1, "%d %d %lf %s", &x, &y, &scale, action_filename)<3) return false;
                 printf("Zone %d %d\n", x, y);
-                clickzones.push_back(Clickzone{x, y, scale});
+                clickzone_add(x, y, scale, *action_filename ? action_filename : NULL);
                 break;
             }
-            case 'B': case 'b': // Set background
+            // Decals
+            case 'D': case 'd': {
+                int x, y;
+                char filename[256];
+                if (sscanf(stmt+1, "%d %d %s", &x, &y, filename)!=3) return false;
+                printf("Decal %d %d %s\n", x, y, filename);
+                decal_add(x, y, filename);
+                break;
+            }
+            // Set background
+            case 'B': case 'b':
                 setBackground(trim(stmt+1));
                 break;
+            // Reset/Clear Clickzones and decals
+            case 'R': case 'r': case 'C': case 'c':
+                // TODO: Finalize letter.
+                clickzone_clear();
+                decal_clear();
+                break;
             case '?': // Check for flag
+                // Check for flag
+                printf("Check flag '%s'\n", trim(stmt+1));
                 flag = true; //TODO: FLAGS
                 break;
             case '!': // Not
                 flag = !flag;
+                break;
+            // Open a text message
+            case 'T': case 't':
+                printf("Say '%s'\n", trim(stmt+1));
+                textbox(trim(stmt+1));
+                break;
+            // Execute a file
+            case 'X': case 'x':
+                fclose(file);
+                return execScript(trim(stmt+1));
                 break;
             case '\0': // empty lines
                 break;
@@ -62,11 +95,20 @@ bool execScript(char const *const filename){
     return true;
 }
 
+//TODO: these should take a file as an arg
+void _clickzone_save_script();
+void _decal_save_script();
+
 void saveScript(){
     //TODO: Write to a file, write to the PS2 Memory card.
-    printf(
-        "# BRETON SAVE\n\n# Background\nB %s\n\n",
-        getBackground()
-    );
-    //TODO: Save clickzones
+    printf("# BRETON SAVE\n\n");
+
+    char const *bg = getBackground();
+    if (bg) printf("# Background\nB %s\n\n", bg);
+
+    printf("# Clickzones:\n");
+    _clickzone_save_script();
+    
+    printf("\n# Decals:\n");
+    _decal_save_script();
 }

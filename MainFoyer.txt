@@ -1,0 +1,19 @@
+# This is a screen file
+# filled with "Click Zones", "decals", and a background image.
+
+# Clear the clickzones from the last file
+# WARNING: COMMAND LETTER IS NOT FINAL
+r
+
+# Background Image
+b MainFoyer.png
+
+t Welcome to the foyer!
+
+# X   Y   Scale
+Z 200 200 100
+d 192 192 my_awesome_decal.png
+
+Z 400 200 200 Kitchen_N.txt
+d 392 192 rightarrow.png
+

@@ -1,4 +1,5 @@
 #include "clickzone.h"
+#include "script.h"
 #include "main.h"
 #include <math.h>
 
@@ -86,4 +87,30 @@ void clickzone_draw(){
         for(int x = rx-SIZE; x<rx+SIZE; x++) for(int y = ry-SIZE; y<ry+SIZE; y++)
             ((uint32_t *) screen->pixels)[y*screen->w+x] = ((move_cooldown<0)?0xFFFF0000:0xFF00AAFF);
     }
+}
+
+// used from scripts
+void clickzone_clear(){
+    clickzones.clear();
+    selected_zone = -1;
+}
+
+int clickzone_selected(){
+    return selected_zone;
+}
+
+void clickzone_add(int x, int y, double scale, char const* action){
+    clickzones.push_back(Clickzone{x, y, scale, action ? strdup(action) : NULL});
+}
+
+void clickzone_act(){
+    if(selected_zone==-1) return;
+    auto &z = clickzones[selected_zone];
+    if(z.action) execScript(z.action);
+}
+
+//TODO: this should take a file as an arg
+void _clickzone_save_script(){
+    for (auto &cz : clickzones)
+        printf("Z %d %d %lf %s\n", cz.x, cz.y, cz.scale, cz.action ? cz.action : "");
 }
