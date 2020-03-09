@@ -3,6 +3,7 @@
 #include "main.h"
 #include "textbox.h"
 #include <stdio.h>
+#include "flag.h"
 
 char *trim(char *stmt){
     while (*stmt==' ' || *stmt=='\t') stmt++;
@@ -65,10 +66,26 @@ bool execScript(char const *const filename){
                 clickzone_clear();
                 decal_clear();
                 break;
+            case 'F': case 'f':{
+                stmt = trim(++stmt);
+                switch (*stmt){
+                    case '+':
+                        flag_set(std::string(trim(++stmt)), true);
+                        break;
+                    case '-':
+                        flag_set(std::string(trim(++stmt)), false);
+                        break;
+                    case '!':
+                        flag_flip(std::string(trim(++stmt)));
+                        break;
+                    default:
+                        printf("UNKNOWN FLAG COMMAND 0x%02x\n", *stmt);
+                        break;
+                }
+            }
             case '?': // Check for flag
                 // Check for flag
-                printf("Check flag '%s'\n", trim(stmt+1));
-                flag = true; //TODO: FLAGS
+                flag = flag_get(std::string(trim(stmt+1)));
                 break;
             case '!': // Not
                 flag = !flag;
@@ -98,6 +115,7 @@ bool execScript(char const *const filename){
 //TODO: these should take a file as an arg
 void _clickzone_save_script();
 void _decal_save_script();
+void _flag_save_script();
 
 void saveScript(){
     //TODO: Write to a file, write to the PS2 Memory card.
@@ -111,4 +129,7 @@ void saveScript(){
     
     printf("\n# Decals:\n");
     _decal_save_script();
+
+    printf("\n# Flags:\n");
+    _flag_save_script();
 }

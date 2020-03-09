@@ -1,0 +1,5 @@
+?MainFoyerLightOn
++t Turning lights off
+-t Turning lights on
+f!MainFoyerLightOn
+x MainFoyer.txt

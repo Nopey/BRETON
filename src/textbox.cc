@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "decal.h"
 #include "main.h"
 
 static SDL_Color const color = { 255, 255, 255 };
@@ -17,10 +18,12 @@ void textbox(const char *text){
     SDL_Surface *message;
     assert(message = TTF_RenderText_Solid( font, text, color ));
 
+    background_draw();
+    decal_draw();
 
     SDL_Rect offset;
-    offset.x = 0;
-    offset.y = 0;
+    offset.x = screen->w/2 - message->w/2;
+    offset.y = screen->h - message->h - 10;
     SDL_BlitSurface(message,  NULL, screen, &offset);
 
     assert(SDL_Flip(screen)!=-1);

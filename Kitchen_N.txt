@@ -41,9 +41,6 @@ z 257 31  100
 z 498 297 100
 z 150 169 100
 
-# If the side door is open
-# ? sideDoorOpen
-
 # if its open, execute MainFoyer.txt
 # + x MainFoyer.txt
 # else, print some messages

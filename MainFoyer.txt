@@ -8,12 +8,20 @@ r
 # Background Image
 b MainFoyer.png
 
-t Welcome to the foyer!
+?MainFoyerLightOn
+Z 300 400 100 LightSwitch.txt
++d 284 384 lighton.png
+-d 284 384 lightoff.png
+
+?MainFoyerVisited
+-t Welcome to the foyer!
+-f+MainFoyerVisited
 
 # X   Y   Scale
-Z 200 200 100
+Z 200 200 100 FlagExample.txt
 d 192 192 my_awesome_decal.png
 
 Z 400 200 200 Kitchen_N.txt
 d 392 192 rightarrow.png
+
 

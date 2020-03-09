@@ -18,8 +18,8 @@ void clickzone_move(int x, int y){
         rx = clickzones[selected_zone].x;
         ry = clickzones[selected_zone].y;
     }else{
-        rx = SCREEN_WIDTH/2;
-        ry = SCREEN_HEIGHT/2;
+        rx = screen->w/2;
+        ry = screen->h/2;
     }
 
     // Velocity
@@ -65,6 +65,28 @@ void clickzone_move(int x, int y){
         }
     }
 }
+
+void clickzone_near(int x, int y){
+    double best_score = 3;
+    int best_idx = -1;
+    for (int idx = 0; idx<(int)clickzones.size(); idx++) {
+        // cx is the vector from us towards the zone
+        int cx = clickzones[idx].x-x;
+        int cy = clickzones[idx].y-y;
+        double cm = sqrt(cx*cx+cy*cy);
+
+        double score = clickzones[idx].scale/cm;
+        if (score>best_score) {
+            best_score = score;
+            best_idx = idx;
+        }
+    }
+    if (best_idx!=selected_zone) {
+        printf("[near] Moved to %d with score of %.10lf\n", best_idx, best_score);
+        selected_zone = best_idx;
+    }
+}
+
 void clickzone_draw(){
     //TODO: Once decals are a thing, this square rendering will be unnecessary.
     for (int idx = 0; idx<(int)clickzones.size(); idx++) {

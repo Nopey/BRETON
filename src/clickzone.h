@@ -10,7 +10,8 @@ struct Clickzone{
 void clickzone_act();
 
 void clickzone_update();
-void clickzone_move(int x, int y);
+void clickzone_move(int dx, int dy);
+void clickzone_near(int x, int y);
 void clickzone_draw();
 int clickzone_selected();
 

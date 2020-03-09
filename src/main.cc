@@ -11,6 +11,11 @@
 #include "textbox.h"
 #include "main.h"
 
+// Screen attributes
+int const SCREEN_WIDTH = 640;
+int const SCREEN_HEIGHT = 480;
+int const SCREEN_BPP = 32;
+
 SDL_Surface *load_image( char const * filename ) {
     SDL_Surface* raw, *optimized = NULL;
 
@@ -34,8 +39,10 @@ void setBackground(char const * path){
     background_path = (char *) realloc(background_path, len);
     strcpy(background_path, path);
     assert(background_image = load_image(background_path));
+}
 
-    // Allows textboxes upon entry to a room to show the background
+void background_draw(){
+    if(!background_image) return;
     SDL_Rect offset;
     offset.x = 0;
     offset.y = 0;
@@ -71,8 +78,9 @@ int main(int argc, char **argv) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_MOUSEMOTION:{
-                    int x = event.motion.xrel, y = event.motion.yrel;
-                    clickzone_move(x, y);
+                    // int x = event.motion.xrel, y = event.motion.yrel;
+                    // clickzone_move(x, y);
+                    clickzone_near(event.motion.x, event.motion.y);
                     break;
                 }
                 case SDL_MOUSEBUTTONDOWN: if(event.button.button == SDL_BUTTON_LEFT){
@@ -90,7 +98,7 @@ int main(int argc, char **argv) {
         clickzone_update();
 
         // Draw background
-        if (background_image) SDL_BlitSurface(background_image, NULL, screen, &offset);
+        background_draw();
 
         clickzone_draw();
         decal_draw();

@@ -1,0 +1,28 @@
+t 1. initial value of sideDoorOpen
+?sideDoorOpen
++t 1. sideDoorOpen is true
+-t 1. sideDoorOpen is false
+
+t 2. setting sideDoorOpen false
+f-sideDoorOpen
+?sideDoorOpen
++t 2. sideDoorOpen is true
+-t 2. sideDoorOpen is false
+
+t 3. setting sideDoorOpen true
+f+sideDoorOpen
+?sideDoorOpen
++t 3. sideDoorOpen is true
+-t 3. sideDoorOpen is false
+
+t 4. toggling sideDoorOpen (to false)
+f!sideDoorOpen
+?sideDoorOpen
++t 4. sideDoorOpen is true
+-t 4. sideDoorOpen is false
+
+t 5. toggling sideDoorOpen (to true)
+f!sideDoorOpen
+?sideDoorOpen
++t 5. sideDoorOpen is true
+-t 5. sideDoorOpen is false
