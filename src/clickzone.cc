@@ -2,14 +2,11 @@
 #include "script.h"
 #include "main.h"
 #include <math.h>
+#define MOVE_COOLDOWN_LEN 200
 
 std::vector<Clickzone> clickzones;
 static int selected_zone = -1;
-static int move_cooldown = 0;
-
-void clickzone_update(){
-    move_cooldown--;
-}
+static Uint32 last_move = 0;
 
 void clickzone_move(int x, int y){
     // the "real" position, where our focus is now.
@@ -30,7 +27,7 @@ void clickzone_move(int x, int y){
     double sx = double(x)/magnitude;
     double sy = double(y)/magnitude;
 
-    if (magnitude>=3 && move_cooldown<0){
+    if (magnitude>=6000 && SDL_GetTicks()-last_move>MOVE_COOLDOWN_LEN){
         double best_score = 0;
         int best_idx = -1;
         for (int idx = 0; idx<(int)clickzones.size(); idx++) {
@@ -60,7 +57,7 @@ void clickzone_move(int x, int y){
         }
         if (best_idx!=-1) {
             printf("Moved to %d with score of %.10lf\n", best_idx, best_score);
-            move_cooldown=15;
+            last_move=SDL_GetTicks();
             selected_zone = best_idx;
         }
     }
@@ -91,23 +88,26 @@ void clickzone_draw(){
     //TODO: Once decals are a thing, this square rendering will be unnecessary.
     for (int idx = 0; idx<(int)clickzones.size(); idx++) {
         int rx = clickzones[idx].x, ry = clickzones[idx].y;
-        {
-            int const SIZE = 6;
-            for(int x = rx-SIZE; x<rx+SIZE; x++) for(int y = ry-SIZE; y<ry+SIZE; y++)
-                ((uint32_t *) screen->pixels)[y*screen->w+x] = 0xFFFFFFFF;
-        }
-        {
-            int const SIZE = 2;
-            for(int x = rx-SIZE; x<rx+SIZE; x++) for(int y = ry-SIZE; y<ry+SIZE; y++)
-                ((uint32_t *) screen->pixels)[y*screen->w+x] = 0xFF00AA00;
-        }
+        SDL_Rect r;
+        r.w = r.h = 6;
+        r.x = rx-r.w/2;
+        r.y = ry-r.h/2;
+        SDL_FillRect(screen, &r, 0xFFFFFFFF);
+        r.w = r.h = 2;
+        r.x = rx-r.w/2;
+        r.y = ry-r.h/2;
+        SDL_FillRect(screen, &r, SDL_MapRGBA(screen->format, 0x00, 0xAA, 0x00, 0xFF));
     }
     if(selected_zone==-1) return;
     {
         int rx = clickzones[selected_zone].x, ry = clickzones[selected_zone].y;
-        int const SIZE = 5;
-        for(int x = rx-SIZE; x<rx+SIZE; x++) for(int y = ry-SIZE; y<ry+SIZE; y++)
-            ((uint32_t *) screen->pixels)[y*screen->w+x] = ((move_cooldown<0)?0xFFFF0000:0xFF00AAFF);
+        SDL_Rect r;
+        r.w = r.h = 5;
+        r.x = rx-r.w/2;
+        r.y = ry-r.h/2;
+        SDL_FillRect(screen, &r, ((last_move<0)?
+             SDL_MapRGBA(screen->format, 0xFF, 0x00, 0x00, 0xFF)
+            :SDL_MapRGBA(screen->format, 0xFF, 0xAA, 0x00, 0xFF)));
     }
 }
 
@@ -122,17 +122,22 @@ int clickzone_selected(){
 }
 
 void clickzone_add(int x, int y, double scale, char const* action){
-    clickzones.push_back(Clickzone{x, y, scale, action ? strdup(action) : NULL});
+    //clickzones.push_back(Clickzone{x, y, scale, action ? strdup(action) : NULL});
+    Clickzone cz = {x, y, scale, action ? strdup(action) : NULL};
+    clickzones.push_back(cz);
 }
 
 void clickzone_act(){
     if(selected_zone==-1) return;
-    auto &z = clickzones[selected_zone];
+
+    Clickzone &z = clickzones[selected_zone];
     if(z.action) execScript(z.action);
 }
 
 //TODO: this should take a file as an arg
 void _clickzone_save_script(){
-    for (auto &cz : clickzones)
+    for(unsigned int x=0; x<clickzones.size(); x++){
+        Clickzone &cz = clickzones[x];
         printf("Z %d %d %lf %s\n", cz.x, cz.y, cz.scale, cz.action ? cz.action : "");
+    }
 }

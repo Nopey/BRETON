@@ -2,15 +2,31 @@
 #include "decal.h"
 #include "main.h"
 #include "textbox.h"
-#include <stdio.h>
 #include "flag.h"
+#include <SDL/SDL_image.h>
+#include <stdio.h>
 
 char *trim(char *stmt){
     while (*stmt==' ' || *stmt=='\t') stmt++;
     return stmt;
 }
 
+static SDL_Surface *load_icon = NULL;
+void script_init(){
+    //TODO: Free the loading image
+    load_icon = IMG_Load("loading.png");
+}
+
 bool execScript(char const *const filename){
+    if(load_icon){
+        background_draw();
+        SDL_Rect r;
+        r.x = screen->w/2 - load_icon->w/2;
+        r.y = screen->h/2 - load_icon->h/2;
+        SDL_BlitSurface(load_icon, NULL, screen, &r);
+        SDL_Flip(screen);
+    }
+
     FILE* file = fopen(filename, "r");
     if (!file) return false;
     char line[256];
@@ -62,7 +78,7 @@ bool execScript(char const *const filename){
                 break;
             // Reset/Clear Clickzones and decals
             case 'R': case 'r': case 'C': case 'c':
-                // TODO: Finalize letter.
+                // TODO: Finalize reset/clear letter.
                 clickzone_clear();
                 decal_clear();
                 break;

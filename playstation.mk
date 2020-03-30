@@ -1,5 +1,3 @@
-#TODO: Update this when I've got a softmodded PS2.
-
 # _____     ___ ____     ___ ____
 #  ____|   |    ____|   |        | |____|
 # |     ___|   |____ ___|    ____| |    \    PS2DEV Open Source Project.
@@ -8,25 +6,34 @@
 # Licenced under Academic Free License version 2.0
 # Review ps2sdk README & LICENSE files for further details.
 
-EE_ERL = cpp-hello.erl
-EE_OBJS = cpp-hello.o
+EE_BIN = game/breton.elf
+include sources.mk
+# SOURCES ONLY ON THE PS2
+SOURCE_NAMES := $(SOURCE_NAMES) \
+ 	ez_iop \
+	iomanX_irx fileXio_irx ps2dev9_irx ps2ip_irx ps2kbd_irx sior_irx \
+	ps2atad_irx ps2hdd_irx ps2fs_irx usbd_irx usbhdfsd_irx mcman_irx mcserv_irx
+EE_OBJS = $(SOURCE_NAMES:%=ps2obj/%.o)
+$(info $$SOURCE_NAMES is [${SOURCE_NAMES}])
+$(info $$EE_OBJS is [${EE_OBJS}])
+# disable warnings because it's gcc 3.3
+EE_CXXFLAGS = -I$(PS2SDK)/ports/include -w
+EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib
+EE_LIBS = -lsdlmain -lmc -lfileXio -lgskit -lmf -lc -lpad -lsior -lkernel -lstdc++ -lSDL_ttf -lSDL_image -lSDL_gfx -lfreetype -lsdl
 
-all: $(EE_ERL) erl-loader.elf libc.erl libkernel.erl
+ps2obj/%.o: src/%.cc
+	$(EE_CXX) $(EE_CXXFLAGS) $(EE_INCS) -c $< -o $@
+
+ps2obj/%_irx.s: $(PS2SDK)/iop/irx/%.irx
+	bin2s $< $@ `echo $*_irx | tr A-Z a-z`
+
+all: $(EE_BIN)
 
 clean:
-	rm -f $(EE_ERL) $(EE_OBJS) erl-loader.elf libc.erl libkernel.erl
+	rm -f $(EE_BIN) $(EE_OBJS) ps2obj/*
 
-erl-loader.elf:
-	cp $(PS2SDK)/ee/bin/erl-loader.elf $@
-
-libc.erl:
-	cp $(PS2SDK)/ee/lib/libc.erl $@
-
-libkernel.erl:
-	cp $(PS2SDK)/ee/lib/libkernel.erl $@
-
-run: $(EE_ERL)
-	ps2client execee host:erl-loader.elf $(EE_ERL)
+run: $(EE_BIN)
+	ps2client execee host:$(EE_BIN)
 
 reset:
 	ps2client reset

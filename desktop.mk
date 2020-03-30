@@ -2,15 +2,15 @@
 #
 # Magnus Larsen
 # Feb 2020
-CXXFLAGS = -g -Wall
+CXXFLAGS = -g -Wall -std=c++03
 LDFLAGS = -g -lSDL -lSDL_image -lSDL_ttf
 
-SHORTNAME=breton
+SHORTNAME=game/breton
 SRCDIR=src
 OBJDIR=obj
-SOURCE_NAMES=main.cc script.cc clickzone.cc decal.cc textbox.cc flag.cc
-OBJECTS=$(SOURCE_NAMES:%.cc=$(OBJDIR)/%.o)
-# SOURCES=$(SOURCE_NAMES:%=$(SRCDIR)/%)
+include sources.mk
+OBJECTS=$(SOURCE_NAMES:%=$(OBJDIR)/%.o)
+
 
 $(SHORTNAME): $(OBJECTS)
 	echo Linking $@..

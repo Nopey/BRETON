@@ -8,11 +8,6 @@ r
 # Background Image
 b MainFoyer.png
 
-?MainFoyerLightOn
-Z 300 400 100 LightSwitch.txt
-+d 284 384 lighton.png
--d 284 384 lightoff.png
-
 ?MainFoyerVisited
 -t Welcome to the foyer!
 -f+MainFoyerVisited
@@ -25,3 +20,8 @@ Z 400 200 200 Kitchen_N.txt
 d 392 192 rightarrow.png
 
 
+?MainFoyerLightOn
+Z 300 400 100 LightSwitch.txt
++d 284 384 lighton.png
++d 0 0 lightoverlay.png
+-d 284 384 lightoff.png

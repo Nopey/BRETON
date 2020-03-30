@@ -4,7 +4,7 @@
 # Magnus Larsen
 # Feb 2020
 
-all: desktop # playstation
+all: playstation desktop
 
 desktop:
 	$(MAKE) -f desktop.mk

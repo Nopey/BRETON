@@ -1,6 +1,7 @@
 #include "flag.h"
 #include <set>
 #include <string>
+#include <stdio.h>
 
 static std::set<std::string> flags;
 
@@ -20,6 +21,6 @@ bool flag_get(std::string flag){
 
 //TODO: this should take a file as an arg
 void _flag_save_script(){
-    for (auto &f : flags)
-        printf("F %s\n", f.c_str());
+    for (std::set<std::string>::const_iterator f = flags.begin(); f!=flags.end(); f++)
+        printf("F+ %s\n", (*f).c_str());
 }

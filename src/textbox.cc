@@ -11,7 +11,8 @@ static TTF_Font *font = NULL;
 
 void textbox_init(){
     assert(TTF_Init()!=-1);
-    assert(font = TTF_OpenFont( "/usr/share/fonts/TTF/Hack-Bold.ttf", 24 ));
+    //TODO: Free the TTF font
+    assert(font = TTF_OpenFont( "Hack-Bold.ttf", 24 ));
 }
 
 void textbox(const char *text){
@@ -28,14 +29,19 @@ void textbox(const char *text){
 
     assert(SDL_Flip(screen)!=-1);
 
-    for(;;){
+    for(bool done=false; !done;){
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-                case SDL_MOUSEBUTTONDOWN: if(event.button.button == SDL_BUTTON_LEFT){
-                    SDL_FreeSurface(message);
-                    return;
-                }
+                case SDL_MOUSEBUTTONDOWN:
+                    if(event.button.button == SDL_BUTTON_LEFT) done=true;
+                    break;
+                    case SDL_JOYBUTTONDOWN:
+                    if (event.jbutton.button == 2){
+                        char buf[100]; snprintf(buf, 100, "Controller #%d", event.jbutton.which); textbox(buf);
+                    }
+                    if (event.jbutton.which==0 && event.jbutton.button == 1) done=true;
+                    break;
                 case SDL_QUIT:
                     printf("TODO: Proper exiting from textbox quit\n");
                     exit(1);
@@ -46,4 +52,5 @@ void textbox(const char *text){
         }
         SDL_Delay(16);
     }
+    SDL_FreeSurface(message);
 }

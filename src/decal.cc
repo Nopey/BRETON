@@ -20,13 +20,19 @@ void decal_add(int x, int y, char const *filename){
     image = IMG_Load(filename);
     assert(image);
 
-    auto &f = image->format;
+    SDL_PixelFormat *f = image->format;
 
     glow = SDL_CreateRGBSurface
         (SDL_SWSURFACE, image->w, image->h, f->BitsPerPixel, 
         f->Rmask, f->Gmask, f->Bmask, f->Amask);
-    SDL_memset(glow->pixels, 0, glow->h * glow->pitch);
-    auto yellow = f->Rmask | f->Gmask | f->Amask;
+    {
+        SDL_Rect r;
+        r.x = r.y = 0;
+        r.w = image->w;
+        r.h = image->h;
+        SDL_FillRect(glow, &r, 0);
+    }
+    Uint32 yellow = f->Rmask | f->Gmask | f->Amask;
     int const OFFSETS[8][2] = {
         { 1, 0},
         { 1, 1},
@@ -40,8 +46,8 @@ void decal_add(int x, int y, char const *filename){
     for(int x=0; x<image->w; x++) for(int y=0; y<image->h; y++){
         bool solid = false;
         for(int o=0; o<9; o++){
-            auto nx = x + OFFSETS[o][0];
-            auto ny = y + OFFSETS[o][1];
+            int nx = x + OFFSETS[o][0];
+            int ny = y + OFFSETS[o][1];
             if(nx<0 || ny<0 || nx>=image->w || ny>=image->h ) continue;
             if(((Uint32*)image->pixels)[nx+ny*image->pitch/4] & f->Amask){
                 solid=true;
@@ -51,10 +57,11 @@ void decal_add(int x, int y, char const *filename){
         if (solid) ((Uint32*)glow->pixels)[x+y*glow->pitch/4] = yellow;
     }
 
-    decals.push_back(Decal{
+    Decal decal = {
         x, y, strdup(filename),
         image, glow
-    });
+    };
+    decals.push_back(decal);
 }
 
 void decal_clear(){
@@ -63,7 +70,8 @@ void decal_clear(){
 
 void decal_draw(){
     int did=0;
-    for(auto d : decals) {
+    for(unsigned int x=0; x<decals.size(); x++){
+        Decal &d = decals[x];
         SDL_Rect offset;
         offset.x = d.x;
         offset.y = d.y;
@@ -74,6 +82,8 @@ void decal_draw(){
 
 //TODO: this should take a file as an arg
 void _decal_save_script(){
-    for (auto &d : decals)
+    for(unsigned int x=0; x<decals.size(); x++){
+        Decal &d = decals[x];
         printf("D %d %d %s\n", d.x, d.y, d.filename);
+    }
 }

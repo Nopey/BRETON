@@ -1,2 +1,4 @@
-obj
+obj/*
+ps2obj/*
 breton
+breton.elf
