@@ -1,0 +1,6 @@
+#TODO: Move checks like this to the owner screen, rather than the daughet script
+?outside_door_key
+f+outside_door_key
+-t You got the Front door key!
+# TODO: Rename start file from Kitchen_N.txt
+x Kitchen_N.txt

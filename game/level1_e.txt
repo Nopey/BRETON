@@ -1,0 +1,27 @@
+# Clear the clickzones from the last file
+# WARNING: COMMAND LETTER IS NOT FINAL
+r
+
+# Background Image
+b Kitchen_N.png
+
+# Bunch of Zones
+# X   Y   Scale
+# Door
+?level1_key_to_drawers
++Z 320 400 100
+-Z 320 400 100 level1_key_under_tv.txt
+ d 320 400 btn.png
+
+# look left and right
+Z 50 240 100 level1_n.txt
+d 50 240 btn.png
+Z 590 240 100 level1_s.txt
+d 590 240 btn.png
+
+
+#TODO: TV you can turn on and off for no purpose
+ Z 320 200 100 level1_tv_toggle.txt
+?level1_tv_on
++d 320 202 btn.png #ON
+-d 320 200 btn.png #OFF

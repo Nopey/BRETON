@@ -1,0 +1,52 @@
+# This is a screen file
+# filled with "Click Zones", "decals", and a background image.
+
+# Clear the clickzones from the last file
+# WARNING: COMMAND LETTER IS NOT FINAL
+r
+
+# Background Image
+b Kitchen_N.png
+
+#a decal
+
+# Bunch of Zones
+# X   Y   Scale
+Z 100 100 100
+d 100 100 my_awesome_decal.png
+
+z 200 100 100
+d 200 100 my_awesome_decal.png
+
+z 200 200 100
+d 200 200 my_awesome_decal.png
+
+z 100 200 100
+d 100 200 my_awesome_decal.png
+
+z 58  197 100
+d 58 197 my_awesome_decal.png
+
+# A transition to the main foyer
+z 500 240 200 MainFoyer.txt
+d 510 232 rightarrow.png
+
+# z 255 180 100
+# z 91  308 100
+# z 228 213 100
+# z 252 232 100
+# z 610 261 100
+# z 392 444 100
+# z 257 31  100
+# z 498 297 100
+# z 150 169 100
+
+
+?MainFoyerLightOn
++d 160 240 lightoverlay.png
+
+# if its open, execute MainFoyer.txt
+# + x MainFoyer.txt
+# else, print some messages
+# - t Side door is locked!
+# - t Maybe I left the keys in the spare room?

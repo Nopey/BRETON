@@ -5,6 +5,7 @@
 #include "flag.h"
 #include <SDL/SDL_image.h>
 #include <stdio.h>
+#include <assert.h>
 
 char *trim(char *stmt){
     while (*stmt==' ' || *stmt=='\t') stmt++;
@@ -27,6 +28,8 @@ bool execScript(char const *const filename){
         SDL_Flip(screen);
     }
 
+    assert(filename);
+    printf("execScript(%s)\n", filename);
     FILE* file = fopen(filename, "r");
     if (!file) return false;
     char line[256];
@@ -34,6 +37,9 @@ bool execScript(char const *const filename){
     // used + and -, set by ? and !
     bool flag = false;
 
+    // line numbers for debugging
+    // int lno = 1;
+    //     printf("#%d\n", lno++);
     while (fgets(line, sizeof(line), file)) {
         // Cut whitespace
         char *stmt = trim(line);
@@ -58,20 +64,28 @@ bool execScript(char const *const filename){
                 double scale;
                 char action_filename[256];
                 action_filename[0] = '\0';
+                //TODO: Better error handling then just return false.
                 if (sscanf(stmt+1, "%d %d %lf %s", &x, &y, &scale, action_filename)<3) return false;
                 printf("Zone %d %d\n", x, y);
                 clickzone_add(x, y, scale, *action_filename ? action_filename : NULL);
                 break;
             }
             // Decals
-            case 'D': case 'd': {
-                int x, y;
-                char filename[256];
-                if (sscanf(stmt+1, "%d %d %s", &x, &y, filename)!=3) return false;
-                printf("Decal %d %d %s\n", x, y, filename);
-                decal_add(x, y, filename);
+            case 'D': case 'd':
+                stmt = trim(stmt+1);
+                if (*stmt == 'M' || *stmt == 'm'){
+                    stmt = stmt+1;
+                    int x, y, id;
+                    if (sscanf(stmt, "%d %d %d", &x, &y, &id)!=3) return false;
+                    decal_move(x, y, id);
+                }else{
+                    int x, y;
+                    char filename[256];
+                    if (sscanf(stmt, "%d %d %s", &x, &y, filename)!=3) return false;
+                    printf("Decal %d %d %s\n", x, y, filename);
+                    decal_add(x, y, filename);
+                }
                 break;
-            }
             // Set background
             case 'B': case 'b':
                 setBackground(trim(stmt+1));
@@ -98,11 +112,19 @@ bool execScript(char const *const filename){
                         printf("UNKNOWN FLAG COMMAND 0x%02x\n", *stmt);
                         break;
                 }
-            }
-            case '?': // Check for flag
-                // Check for flag
-                flag = flag_get(std::string(trim(stmt+1)));
                 break;
+            }
+            case '?':{
+                // Check for flag
+                stmt = trim(stmt+1);
+                bool invert = false;
+                if (*stmt=='!'){
+                    invert = true;
+                    stmt = trim(stmt+1);
+                }
+                flag = invert ^ flag_get(std::string(stmt));
+                break;
+            }
             case '!': // Not
                 flag = !flag;
                 break;
@@ -111,12 +133,22 @@ bool execScript(char const *const filename){
                 printf("Say '%s'\n", trim(stmt+1));
                 textbox(trim(stmt+1));
                 break;
+            // Render & sleep
+            case 'W': case 'w':
+                int delay;
+                if (!sscanf(stmt+1, "%d", &delay)) return false;
+                background_draw();
+                decal_draw(false);
+                SDL_Flip(screen);
+                if(delay) SDL_Delay(delay);
+                break;
             // Execute a file
             case 'X': case 'x':
                 fclose(file);
                 return execScript(trim(stmt+1));
                 break;
-            case '\0': // empty lines
+            // Empty lines
+            case '\0':
                 break;
             default:
                 printf("Unknown load screen statement '%c'\n", *stmt);

@@ -68,16 +68,22 @@ void decal_clear(){
     decals.clear();
 }
 
-void decal_draw(){
+void decal_draw(bool draw_highlight){
     int did=0;
     for(unsigned int x=0; x<decals.size(); x++){
         Decal &d = decals[x];
         SDL_Rect offset;
         offset.x = d.x;
         offset.y = d.y;
-        if (clickzone_selected()==did++) SDL_BlitSurface(d.glow,  NULL, screen, &offset);
+        if (draw_highlight && clickzone_selected()==did++) SDL_BlitSurface(d.glow,  NULL, screen, &offset);
         SDL_BlitSurface(d.image, NULL, screen, &offset);
     }
+}
+
+void decal_move(int x, int y, int id){
+    if (id<0 || ((unsigned int)id)>=decals.size()) return;
+    decals[id].x = x;
+    decals[id].y = y;
 }
 
 //TODO: this should take a file as an arg

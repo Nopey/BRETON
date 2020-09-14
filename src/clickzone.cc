@@ -79,13 +79,13 @@ void clickzone_near(int x, int y){
         }
     }
     if (best_idx!=selected_zone) {
-        printf("[near] Moved to %d with score of %.10lf\n", best_idx, best_score);
+        // printf("[near] Moved to %d with score of %.10lf\n", best_idx, best_score);
         selected_zone = best_idx;
     }
 }
 
 void clickzone_draw(){
-    //TODO: Once decals are a thing, this square rendering will be unnecessary.
+    //TODO: Since decals are now a thing, this square rendering is unnecessary.
     for (int idx = 0; idx<(int)clickzones.size(); idx++) {
         int rx = clickzones[idx].x, ry = clickzones[idx].y;
         SDL_Rect r;

@@ -1,0 +1,53 @@
+# Clear the clickzones from the last file
+# WARNING: COMMAND LETTER IS NOT FINAL
+r
+
+# Background Image
+b Kitchen_N.png
+
+# Bunch of Zones
+# X   Y   Scale
+# Door forward
+?level1_key_to_exit
+-Z 100 100 100 its_locked.txt
++Z 100 100 100 level2_n.txt
+ d 100 100 btn.png
+
+# look left and right
+Z 50 240 100 level1_w.txt
+d 50 240 btn.png
+Z 590 240 100 level1_e.txt
+d 590 240 btn.png
+
+
+# 3 drawers, only one can be open
+# bottom drawer has key
+
+?level1_key_to_drawers
++Z 480 200 100 level1_drawer1.txt
+-Z 480 200 100 its_locked.txt
+?level1_drawer1_open
++d 480 200 level1_drawer_open.png
+-d 480 200 level1_drawer_closed.png
+
+?level1_key_to_drawers
++Z 480 240 100 level1_drawer2.txt
+-Z 480 240 100 its_locked.txt
+?level1_drawer2_open
++d 480 240 level1_drawer_open.png
+-d 480 240 level1_drawer_closed.png
+
+
+# Drawer 3 is complicated, woo!
+?level1_key_to_drawers
+-Z 480 280 100 its_locked.txt
++?level1_drawer3_open
+-d 480 280 level1_drawer_closed.png
++?!level1_key_to_exit
++d 480 280 level1_drawer_with_key.png
++Z 480 280 100 level1_grab_key_from_drawer.txt
+-Z 480 280 100 level1_drawer3.txt
+
+?level1_drawer3_open
++?level1_key_to_exit
++d 480 280 level1_drawer_open.png

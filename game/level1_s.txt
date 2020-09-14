@@ -1,0 +1,15 @@
+# Clear the clickzones from the last file
+# WARNING: COMMAND LETTER IS NOT FINAL
+r
+
+# Background Image
+b Kitchen_N.png
+
+# Bunch of Zones
+# X   Y   Scale
+
+# look left and right
+Z 50 240 100 level1_e.txt
+d 50 240 btn.png
+Z 590 240 100 level1_w.txt
+d 590 240 btn.png

@@ -35,6 +35,7 @@ SDL_Surface *screen = NULL;
 
 //TODO: Cache the background
 void setBackground(char const * path){
+    if (background_path && !strcmp(background_path, path)) return;
     if (background_image) SDL_FreeSurface(background_image);
     size_t len = strlen(path);
     background_path = (char *) realloc(background_path, len);

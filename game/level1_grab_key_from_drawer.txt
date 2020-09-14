@@ -1,0 +1,3 @@
+t You found a key in the drawer
+f+level1_key_to_exit
+x level1_n.txt

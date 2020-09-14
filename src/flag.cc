@@ -6,6 +6,7 @@
 static std::set<std::string> flags;
 
 void flag_set(std::string flag, bool value){
+    // printf("flag_set '%s'\n", flag.c_str());
     if(value) flags.insert(flag);
     else flags.erase(flag);
 }
@@ -15,6 +16,7 @@ void flag_flip(std::string flag){
 }
 
 bool flag_get(std::string flag){
+    // printf("flag_get '%s'\n", flag.c_str());
     return flags.find(flag)!=flags.end();
 }
 
